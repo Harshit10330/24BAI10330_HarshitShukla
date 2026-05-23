@@ -1,0 +1,139 @@
+#1 List the name of each employee along with their job title and department name.
+select e.name, j.job_title, d.dept_name
+from employees e
+join jobs j ON e.job_id = j.job_id
+join departments d ON e.dept_id = d.dept_id;
+
+#2 Find all employees whose salary is higher than the average salary of the IT department.
+select name
+from employees
+where salary > (
+    select avg(salary)
+    from employees
+    where dept_id = (
+        select dept_id from departments where dept_name = 'IT'
+    )
+);
+
+#3 Calculate the total salary expenditure for each department name.
+select d.dept_name, sum(e.salary) as total_salary
+from employees e
+join departments d on e.dept_id = d.dept_id
+group by d.dept_name;
+
+#5 Retrieve a list of employee names and their respective manager's names.
+select e.name as employee_name,
+       m.name as manager_name
+from employees e
+left join employees m
+on e.manager_id = m.emp_id;
+
+#6 Find the top 3 highest-paid employees and list them in descending order.
+select name, salary 
+from employees
+order by salary desc 
+limit 3;
+
+#8 Find the number of employees hired each year.
+select year(hire_date) as hire_year,
+       count(emp_id) as total_hired
+from employees
+group by year(hire_date)
+oreder by hire_year;  
+
+#9 List job titles where the maximum salary of an employee in that role is less than 100,000.
+select j.job_title 
+from jobs j
+join employees e on j.job_id = e.job_id
+group by j.job_title
+having max(e.salary) < 100000;
+
+#10 Find the names of employees who work in the same department as David.
+select name
+from employees
+where dept_id = (
+    select dept_id
+    from employees
+    where name = 'David'
+);
+
+#11 Show all department names even if they have no employees assigned to them.
+select d.dept_name, e.name as employee_name
+from departments d
+left join employees e on d.dept_id = e.dept_id;
+
+#12 Find employees who were hired between 2018 and 2020 and earn more than 60,000.
+select name, salary, hire_date
+from employees
+where hire_date between '2018-01-01' and '2020-12-31'
+and salary > 60000;
+
+#13 Find employees who earn more than the average salary of their own department.
+select e1.name, e1.salary
+from employees e1
+where e1.salary > (
+    select avg(e2.salary)
+    from employees e2
+    where e2.dept_id = e1.dept_id
+);
+
+#14 Find the job title and salary of the employee with ID 504.
+select e.name, j.job_title, e.salary
+from employees e
+join jobs j on e.job_id = j.job_id
+where e.emp_id = 504;
+
+#15 For each manager, find the minimum salary of employees reporting to them.
+select manager_id,
+       min(salary) as minimum_salary
+from employees
+where manager_id is not null
+group by manager_id;
+
+#16 List departments that do not have any Analysts.
+select dept_name
+from departments
+where dept_id NOT IN (
+    select e.dept_id
+    from employees e
+    JOIN jobs j on e.job_id = j.job_id
+    where j.job_title = 'Analyst'
+);
+
+#17 Find the difference between the highest and lowest salary in the company.
+SELECT MAX(salary) - MIN(salary) AS salary_difference
+FROM Employees;
+
+#19 Identify managers who manage more than 2 people.
+select manager_id,
+       count(emp_id) as total_employees
+from employees
+WHERE manager_id IS NOT NULL
+GROUP BY manager_id
+HAVING count(emp_id) > 2;
+
+#22 Find employees in the Finance department whose names contain the letter 'i'.
+select e.name, d.dept_name
+from employees e
+join departments d
+on e.dept_id = d.dept_id
+where d.dept_name = 'Finance'
+and e.name like '%i%';
+
+#24 List the department that pays the highest total salary.
+select dept_name 
+from (
+    select d.dept_name, sum(e.salary) as total_salary
+    from departments d
+    JOIN Employees e ON d.dept_id = e.dept_id
+    GROUP BY d.dept_name
+) AS DepartmentTotals
+ORDER BY total_salary DESC
+LIMIT 1;
+
+#25 Find all employees who report to Charlie.
+select e.name as employee_name
+from employees e
+join employees m
+on e.manager_id = m.emp_id
+where m.name = 'Charlie';
