@@ -1,0 +1,46 @@
+CREATE DATABASE college;
+
+USE college;
+
+CREATE TABLE student (
+    id INT PRIMARY KEY,
+    name VARCHAR(20),
+    marks INT,
+    login_time TIMESTAMP
+);
+
+INSERT INTO student
+VALUES (1, 'Rahul', 80, CURRENT_TIMESTAMP);
+
+INSERT INTO student
+VALUES (2, 'Aman', 75, CURRENT_TIMESTAMP);
+
+SELECT * FROM student;
+
+START TRANSACTION;
+
+UPDATE student
+SET marks = 90
+WHERE id = 1;
+
+SAVEPOINT s1;
+
+UPDATE student
+SET marks = 95
+WHERE id = 2;
+
+SAVEPOINT s2;
+
+SELECT * FROM student
+WHERE marks > 80;
+
+ROLLBACK TO s1;
+
+COMMIT;
+
+DELETE FROM student
+WHERE id = 2;
+
+ROLLBACK;
+
+DROP TABLE student;
